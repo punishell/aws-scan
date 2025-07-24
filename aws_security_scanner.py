@@ -2271,10 +2271,23 @@ class AWSSecurityScanner:
             version_response = self.run_aws_command(version_command)
             
             if version_response:
-                policy_doc = json.loads(version_response).get("PolicyVersion", {}).get("Document", {})
+                policy_version = json.loads(version_response).get("PolicyVersion", {})
+                document = policy_version.get("Document", {})
+                
+                # If document is a string, parse it as JSON
+                if isinstance(document, str):
+                    try:
+                        policy_doc = json.loads(document)
+                    except json.JSONDecodeError:
+                        continue
+                else:
+                    policy_doc = document
                 
                 # Check for admin-like privileges or wildcard permissions
                 for statement in policy_doc.get("Statement", []):
+                    # Ensure statement is a dictionary
+                    if not isinstance(statement, dict):
+                        continue
                     effect = statement.get("Effect")
                     action = statement.get("Action", [])
                     resource = statement.get("Resource", [])
