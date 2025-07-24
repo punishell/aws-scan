@@ -4414,8 +4414,8 @@ class AWSSecurityScanner:
                                 # Check for access logging
                                 if not stage.get("accessLogSettings"):
                                     apis_without_logging.append(f"{api_name}/{stage_name} (REST API, {region})")
-            except Exception as e:
-                print(f"Error checking REST API Gateway in region {region}: {str(e)}")
+                except Exception as e:
+                    print(f"Error checking REST API Gateway in region {region}: {str(e)}")
         
         # Check HTTP APIs (API Gateway v2)
         http_api_command = f"aws apigatewayv2 get-apis --region {region}"
